@@ -42,7 +42,9 @@ export async function getBooksWithQuotes(): Promise<BookWithQuotes[]> {
 
   const { data: quotes, error: quotesError } = await supabase
     .from('quotes')
-    .select('*');
+    .select('*')
+    .neq('text', '')
+    .not('text', 'is', null);
 
   if (quotesError) {
     console.error('Error fetching quotes:', quotesError);
@@ -53,7 +55,9 @@ export async function getBooksWithQuotes(): Promise<BookWithQuotes[]> {
     if (!acc[quote.book_id]) {
       acc[quote.book_id] = [];
     }
-    acc[quote.book_id].push(quote.text);
+    if (quote.text && quote.text.trim()) {
+      acc[quote.book_id].push(quote.text.trim());
+    }
     return acc;
   }, {} as Record<string, string[]>);
 
