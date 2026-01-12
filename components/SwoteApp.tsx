@@ -65,7 +65,7 @@ function LoadingScreen() {
         setQuoteIndex((prev) => (prev + 1) % LOADING_QUOTES.length);
         setIsVisible(true);
       }, 500);
-    }, 10000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);
