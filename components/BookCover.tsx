@@ -47,7 +47,7 @@ export function BookCover({ id, title, author, cover, onSwipeUp }: BookCoverProp
   return (
     <div
       ref={containerRef}
-      className="relative flex-shrink-0 w-24 h-36 cursor-grab active:cursor-grabbing select-none"
+      className="relative flex-shrink-0 w-16 h-24 cursor-grab active:cursor-grabbing select-none"
       style={{
         touchAction: 'pan-x',
         transform: `translateY(${offsetY}px)`,
@@ -65,7 +65,7 @@ export function BookCover({ id, title, author, cover, onSwipeUp }: BookCoverProp
           alt={`${title} by ${author}`}
           fill
           className="object-cover pointer-events-none"
-          sizes="96px"
+          sizes="64px"
           draggable={false}
         />
         {/* Swipe up indicator */}

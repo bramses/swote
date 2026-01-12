@@ -113,14 +113,14 @@ export function SwoteApp() {
 
   if (isLoading) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-gray-950">
+      <div className="w-screen flex items-center justify-center bg-gray-950" style={{ height: '100dvh' }}>
         <div className="text-white">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-gray-950 overflow-hidden">
+    <div className="w-screen flex flex-col bg-gray-950 overflow-hidden" style={{ height: '100dvh' }}>
       {/* Quote list - top 4/5 */}
       <div className="flex-[4] min-h-0">
         <QuoteList
@@ -136,8 +136,8 @@ export function SwoteApp() {
       {/* Divider */}
       <div className="h-px bg-gray-800" />
 
-      {/* Book carousel - bottom 1/5 */}
-      <div className="flex-1 min-h-[140px] max-h-[180px]">
+      {/* Book carousel - bottom */}
+      <div className="shrink-0 h-[120px]">
         <BookCarousel
           books={books}
           onSelectQuote={handleSelectQuote}

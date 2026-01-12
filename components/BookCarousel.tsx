@@ -133,10 +133,6 @@ export function BookCarousel({ books, onSelectQuote, isAtTop, scrollToTop }: Boo
         </button>
       )}
 
-      {/* Hint text */}
-      <div className="absolute bottom-1 left-1/2 -translate-x-1/2 text-xs text-gray-500">
-        Swipe up on a book to add a quote
-      </div>
     </div>
   );
 }
