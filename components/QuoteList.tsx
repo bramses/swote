@@ -9,23 +9,39 @@ interface QuoteListProps {
   onDeleteQuote: (id: string) => void;
   onClearAll: () => void;
   scrollRef: RefObject<HTMLDivElement | null>;
+  fontSize: number;
+  onFontSizeChange: (size: number) => void;
 }
 
-export function QuoteList({ quotes, onDeleteQuote, onClearAll, scrollRef }: QuoteListProps) {
+export function QuoteList({ quotes, onDeleteQuote, onClearAll, scrollRef, fontSize, onFontSizeChange }: QuoteListProps) {
 
   return (
     <div className="h-full flex flex-col relative">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
         <h1 className="text-lg font-semibold text-white">Your Quotes</h1>
-        {quotes.length > 0 && (
-          <button
-            onClick={onClearAll}
-            className="text-sm text-red-400 hover:text-red-300 transition-colors"
-          >
-            Clear All
-          </button>
-        )}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-gray-400">A</span>
+            <input
+              type="range"
+              min="12"
+              max="20"
+              value={fontSize}
+              onChange={(e) => onFontSizeChange(parseInt(e.target.value, 10))}
+              className="w-16 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-white"
+            />
+            <span className="text-sm text-gray-400">A</span>
+          </div>
+          {quotes.length > 0 && (
+            <button
+              onClick={onClearAll}
+              className="text-sm text-red-400 hover:text-red-300 transition-colors"
+            >
+              Clear All
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Quote list */}
@@ -57,6 +73,7 @@ export function QuoteList({ quotes, onDeleteQuote, onClearAll, scrollRef }: Quot
                 key={quote.id}
                 savedQuote={quote}
                 onDelete={() => onDeleteQuote(quote.id)}
+                fontSize={fontSize}
               />
             ))}
           </div>

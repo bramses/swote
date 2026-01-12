@@ -87,10 +87,6 @@ export function BookCover({ id, title, author, cover, onSwipeUp }: BookCoverProp
           </div>
         )}
       </div>
-      {/* Title tooltip on hover */}
-      <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap text-xs text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
-        {title}
-      </div>
     </div>
   );
 }

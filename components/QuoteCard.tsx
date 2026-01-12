@@ -20,9 +20,10 @@ export interface SavedQuote {
 interface QuoteCardProps {
   savedQuote: SavedQuote;
   onDelete: () => void;
+  fontSize: number;
 }
 
-export function QuoteCard({ savedQuote, onDelete }: QuoteCardProps) {
+export function QuoteCard({ savedQuote, onDelete, fontSize }: QuoteCardProps) {
   const [bgColor, setBgColor] = useState<RGB>({ r: 100, g: 100, b: 100 });
   const [offsetX, setOffsetX] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -107,8 +108,8 @@ export function QuoteCard({ savedQuote, onDelete }: QuoteCardProps) {
           style={{ backgroundColor: hexColor }}
         >
           <p
-            className="text-sm leading-relaxed font-medium"
-            style={{ color: textColor }}
+            className="leading-relaxed font-medium"
+            style={{ color: textColor, fontSize: `${fontSize}px` }}
           >
             &ldquo;{savedQuote.quote}&rdquo;
           </p>

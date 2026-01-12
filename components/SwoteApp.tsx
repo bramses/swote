@@ -6,6 +6,7 @@ import { BookCarousel, type Book } from './BookCarousel';
 import type { SavedQuote } from './QuoteCard';
 
 const STORAGE_KEY = 'swote-saved-quotes';
+const FONT_SIZE_KEY = 'swote-font-size';
 
 function loadSavedQuotes(): SavedQuote[] {
   if (typeof window === 'undefined') return [];
@@ -22,11 +23,27 @@ function saveSavedQuotes(quotes: SavedQuote[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(quotes));
 }
 
+function loadFontSize(): number {
+  if (typeof window === 'undefined') return 14;
+  try {
+    const stored = localStorage.getItem(FONT_SIZE_KEY);
+    return stored ? parseInt(stored, 10) : 14;
+  } catch {
+    return 14;
+  }
+}
+
+function saveFontSize(size: number) {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem(FONT_SIZE_KEY, String(size));
+}
+
 export function SwoteApp() {
   const [books, setBooks] = useState<Book[]>([]);
   const [savedQuotes, setSavedQuotes] = useState<SavedQuote[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isHydrated, setIsHydrated] = useState(false);
+  const [fontSize, setFontSize] = useState(14);
   const quoteListScrollRef = useRef<HTMLDivElement>(null);
 
   const isAtTop = useCallback(() => {
@@ -51,9 +68,10 @@ export function SwoteApp() {
       });
   }, []);
 
-  // Hydrate saved quotes from localStorage
+  // Hydrate saved quotes and font size from localStorage
   useEffect(() => {
     setSavedQuotes(loadSavedQuotes());
+    setFontSize(loadFontSize());
     setIsHydrated(true);
   }, []);
 
@@ -88,6 +106,11 @@ export function SwoteApp() {
     setSavedQuotes([]);
   }, []);
 
+  const handleFontSizeChange = useCallback((size: number) => {
+    setFontSize(size);
+    saveFontSize(size);
+  }, []);
+
   if (isLoading) {
     return (
       <div className="h-screen w-screen flex items-center justify-center bg-gray-950">
@@ -105,6 +128,8 @@ export function SwoteApp() {
           onDeleteQuote={handleDeleteQuote}
           onClearAll={handleClearAll}
           scrollRef={quoteListScrollRef}
+          fontSize={fontSize}
+          onFontSizeChange={handleFontSizeChange}
         />
       </div>
 
