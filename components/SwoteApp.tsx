@@ -8,6 +8,19 @@ import type { SavedQuote } from './QuoteCard';
 const STORAGE_KEY = 'swote-saved-quotes';
 const FONT_SIZE_KEY = 'swote-font-size';
 
+const LOADING_QUOTES = [
+  { text: "A reader lives a thousand lives before he dies. The man who never reads lives only one.", author: "George R.R. Martin" },
+  { text: "So many books, so little time.", author: "Frank Zappa" },
+  { text: "A room without books is like a body without a soul.", author: "Cicero" },
+  { text: "The only thing that you absolutely have to know, is the location of the library.", author: "Albert Einstein" },
+  { text: "I have always imagined that Paradise will be a kind of library.", author: "Jorge Luis Borges" },
+  { text: "There is no friend as loyal as a book.", author: "Ernest Hemingway" },
+  { text: "Until I feared I would lose it, I never loved to read. One does not love breathing.", author: "Harper Lee" },
+  { text: "Books are a uniquely portable magic.", author: "Stephen King" },
+  { text: "Reading is essential for those who seek to rise above the ordinary.", author: "Jim Rohn" },
+  { text: "A book is a dream that you hold in your hand.", author: "Neil Gaiman" },
+];
+
 function loadSavedQuotes(): SavedQuote[] {
   if (typeof window === 'undefined') return [];
   try {
@@ -38,6 +51,46 @@ function saveFontSize(size: number) {
   localStorage.setItem(FONT_SIZE_KEY, String(size));
 }
 
+function LoadingScreen() {
+  const [quoteIndex, setQuoteIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    // Randomize on mount to avoid hydration mismatch
+    setQuoteIndex(Math.floor(Math.random() * LOADING_QUOTES.length));
+
+    const interval = setInterval(() => {
+      setIsVisible(false);
+      setTimeout(() => {
+        setQuoteIndex((prev) => (prev + 1) % LOADING_QUOTES.length);
+        setIsVisible(true);
+      }, 500);
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const quote = LOADING_QUOTES[quoteIndex];
+
+  return (
+    <div className="w-screen flex flex-col items-center justify-center bg-gray-950 px-8" style={{ height: '100dvh' }}>
+      <div
+        className={`text-center transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}
+      >
+        <p className="text-white text-xl leading-relaxed mb-4">
+          &ldquo;{quote.text}&rdquo;
+        </p>
+        <p className="text-gray-400 text-sm">
+          — {quote.author}
+        </p>
+      </div>
+      <div className="mt-8">
+        <div className="w-6 h-6 border-2 border-gray-600 border-t-white rounded-full animate-spin" />
+      </div>
+    </div>
+  );
+}
+
 export function SwoteApp() {
   const [books, setBooks] = useState<Book[]>([]);
   const [savedQuotes, setSavedQuotes] = useState<SavedQuote[]>([]);
@@ -59,7 +112,9 @@ export function SwoteApp() {
     fetch('/api/books')
       .then((res) => res.json())
       .then((data) => {
-        setBooks(data.books);
+        // Shuffle books randomly
+        const shuffled = [...data.books].sort(() => Math.random() - 0.5);
+        setBooks(shuffled);
         setIsLoading(false);
       })
       .catch((err) => {
@@ -112,11 +167,7 @@ export function SwoteApp() {
   }, []);
 
   if (isLoading) {
-    return (
-      <div className="w-screen flex items-center justify-center bg-gray-950" style={{ height: '100dvh' }}>
-        <div className="text-white">Loading...</div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (

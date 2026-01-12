@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
         hostname: 'm.media-amazon.com',
         pathname: '/images/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'readwise-assets.s3.amazonaws.com',
+        pathname: '/**',
+      },
     ],
   },
 };
