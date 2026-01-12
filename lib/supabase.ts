@@ -40,16 +40,38 @@ export async function getBooksWithQuotes(): Promise<BookWithQuotes[]> {
     throw booksError;
   }
 
-  const { data: quotes, error: quotesError } = await supabase
-    .from('quotes')
-    .select('*')
-    .neq('text', '')
-    .not('text', 'is', null);
+  // Fetch all quotes (Supabase defaults to 1000 limit)
+  let allQuotes: DbQuote[] = [];
+  let from = 0;
+  const pageSize = 1000;
 
-  if (quotesError) {
-    console.error('Error fetching quotes:', quotesError);
-    throw quotesError;
+  while (true) {
+    const { data: quotesPage, error: quotesError } = await supabase
+      .from('quotes')
+      .select('*')
+      .neq('text', '')
+      .not('text', 'is', null)
+      .range(from, from + pageSize - 1);
+
+    if (quotesError) {
+      console.error('Error fetching quotes:', quotesError);
+      throw quotesError;
+    }
+
+    allQuotes = allQuotes.concat(quotesPage);
+
+    if (quotesPage.length < pageSize) {
+      break; // No more pages
+    }
+    from += pageSize;
   }
+
+  const quotes = allQuotes;
+
+  console.log('[Supabase] Books fetched:', books.length);
+  console.log('[Supabase] Book IDs:', books.map(b => ({ id: b.id, title: b.title })));
+  console.log('[Supabase] Quotes fetched:', quotes.length);
+  console.log('[Supabase] Unique book_ids in quotes:', [...new Set(quotes.map(q => q.book_id))]);
 
   const quotesByBookId = quotes.reduce((acc, quote) => {
     if (!acc[quote.book_id]) {
@@ -61,11 +83,17 @@ export async function getBooksWithQuotes(): Promise<BookWithQuotes[]> {
     return acc;
   }, {} as Record<string, string[]>);
 
-  return books.map((book) => ({
+  console.log('[Supabase] Quotes grouped by book_id:', Object.keys(quotesByBookId).map(id => ({ id, count: quotesByBookId[id].length })));
+
+  const result = books.map((book) => ({
     id: book.id,
     title: book.title,
     author: book.author,
     cover: book.cover_url,
     quotes: quotesByBookId[book.id] || [],
   }));
+
+  console.log('[Supabase] Final books with quote counts:', result.map(b => ({ title: b.title, quoteCount: b.quotes.length })));
+
+  return result;
 }

@@ -59,8 +59,30 @@ export function BookCarousel({ books, onSelectQuote, isAtTop, scrollToTop }: Boo
     if (!isAtTop()) {
       scrollToTop();
     }
+
+    console.log('[SwipeUp] Book:', book.title);
+    console.log('[SwipeUp] Available quotes:', book.quotes);
+    console.log('[SwipeUp] Quotes count:', book.quotes?.length ?? 0);
+
+    if (!book.quotes || book.quotes.length === 0) {
+      console.warn('[SwipeUp] No quotes available for this book!');
+      return;
+    }
+
     // Pick a random quote from the book
-    const randomQuote = book.quotes[Math.floor(Math.random() * book.quotes.length)];
+    const randomIndex = Math.floor(Math.random() * book.quotes.length);
+    const randomQuote = book.quotes[randomIndex];
+
+    console.log('[SwipeUp] Selected index:', randomIndex);
+    console.log('[SwipeUp] Selected quote:', randomQuote);
+    console.log('[SwipeUp] Quote type:', typeof randomQuote);
+    console.log('[SwipeUp] Quote length:', randomQuote?.length ?? 'undefined');
+
+    if (!randomQuote || !randomQuote.trim()) {
+      console.warn('[SwipeUp] Empty quote selected!');
+      return;
+    }
+
     onSelectQuote(book, randomQuote);
   };
 
