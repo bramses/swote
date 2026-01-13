@@ -5,6 +5,21 @@ import Image from 'next/image';
 import { useSwipe } from '@/lib/hooks/useSwipe';
 import { getCachedEdgeColor, rgbToHex, getContrastTextColor, type RGB } from '@/lib/colorUtils';
 
+export const QUOTE_FONTS = [
+  'var(--font-playfair)',
+  'var(--font-merriweather)',
+  'var(--font-lora)',
+  'var(--font-crimson)',
+  'var(--font-libre-baskerville)',
+  'var(--font-eb-garamond)',
+  'var(--font-cormorant)',
+  'var(--font-spectral)',
+  'var(--font-source-serif)',
+  'var(--font-bitter)',
+] as const;
+
+export type QuoteFont = typeof QUOTE_FONTS[number];
+
 export interface SavedQuote {
   id: string;
   quote: string;
@@ -15,6 +30,7 @@ export interface SavedQuote {
     cover: string;
   };
   savedAt: number;
+  font?: QuoteFont;
 }
 
 interface QuoteCardProps {
@@ -109,7 +125,11 @@ export function QuoteCard({ savedQuote, onDelete, fontSize }: QuoteCardProps) {
         >
           <p
             className="leading-relaxed font-medium"
-            style={{ color: textColor, fontSize: `${fontSize}px` }}
+            style={{
+              color: textColor,
+              fontSize: `${fontSize}px`,
+              fontFamily: savedQuote.font || 'Georgia, serif',
+            }}
           >
             &ldquo;{savedQuote.quote}&rdquo;
           </p>

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { QuoteList } from './QuoteList';
 import { BookCarousel, type Book } from './BookCarousel';
-import type { SavedQuote } from './QuoteCard';
+import { type SavedQuote, QUOTE_FONTS } from './QuoteCard';
 
 const STORAGE_KEY = 'swote-saved-quotes';
 const FONT_SIZE_KEY = 'swote-font-size';
@@ -138,6 +138,7 @@ export function SwoteApp() {
   }, [savedQuotes, isHydrated]);
 
   const handleSelectQuote = useCallback((book: Book, quote: string) => {
+    const randomFont = QUOTE_FONTS[Math.floor(Math.random() * QUOTE_FONTS.length)];
     const newQuote: SavedQuote = {
       id: `${book.id}-${Date.now()}`,
       quote,
@@ -148,6 +149,7 @@ export function SwoteApp() {
         cover: book.cover,
       },
       savedAt: Date.now(),
+      font: randomFont,
     };
 
     setSavedQuotes((prev) => [newQuote, ...prev]);
