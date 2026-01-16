@@ -43,6 +43,15 @@ export function QuoteCard({ savedQuote, onDelete, fontSize }: QuoteCardProps) {
   const [bgColor, setBgColor] = useState<RGB>({ r: 100, g: 100, b: 100 });
   const [offsetX, setOffsetX] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const text = `"${savedQuote.quote}"\n— ${savedQuote.book.author}, ${savedQuote.book.title}`;
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     getCachedEdgeColor(savedQuote.book.cover).then(setBgColor);
@@ -107,24 +116,39 @@ export function QuoteCard({ savedQuote, onDelete, fontSize }: QuoteCardProps) {
         onMouseLeave={handleEnd}
       >
         {/* Book cover thumbnail */}
-        <div className="relative w-16 h-24 flex-shrink-0">
+        <div className="relative w-16 h-24 shrink-0">
           <Image
             src={savedQuote.book.cover}
             alt={savedQuote.book.title}
             fill
-            className="object-cover pointer-events-none"
+            className="object-cover"
             sizes="64px"
-            draggable={false}
           />
         </div>
 
         {/* Quote content with extracted color background */}
         <div
-          className="flex-1 p-3 min-h-24 flex flex-col justify-center"
+          className="flex-1 p-3 min-h-24 flex flex-col justify-center relative"
           style={{ backgroundColor: hexColor }}
         >
+          <button
+            onClick={handleCopy}
+            className="absolute top-2 right-2 p-1 rounded opacity-50 hover:opacity-100 transition-opacity"
+            style={{ color: textColor }}
+            aria-label="Copy quote"
+          >
+            {copied ? (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+            )}
+          </button>
           <p
-            className="leading-relaxed font-medium"
+            className="leading-relaxed font-medium pr-6"
             style={{
               color: textColor,
               fontSize: `${fontSize}px`,
